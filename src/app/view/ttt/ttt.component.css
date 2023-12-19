@@ -1,5 +1,10 @@
 .center{
+  padding-top: 3%;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.background{
+  /*background-image: url("/assets/ssscribble.svg");*/
+  height: 100vh;
 }

@@ -14,6 +14,8 @@ export class TttComponent implements OnInit{
   private draw : Draw = new Draw();
 
   ngOnInit(): void {
+    this.canvas.nativeElement.width = 800;
+    this.canvas.nativeElement.height = 800;
     this.ctx = this.canvas?.nativeElement.getContext('2d');
     if (this.ctx) {
       this.draw.drawBoard(this.ctx, this.model);
