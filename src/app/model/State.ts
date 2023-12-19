@@ -1,5 +1,7 @@
 export enum State{
   X,
   O,
-  NULL
+  DRAW,
+  NULL,
+
 }
