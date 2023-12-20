@@ -5,6 +5,9 @@ export class Draw{
   private WIDTH = 800;
 
   private COLORS = {redLight: "rgb(176,109,113)",white: "rgba(255,255,251,0.78)", draw: "#edede9", black: "#22223b", darkBlue: "#003049", blue: "#9db4c0", red: "rgb(129, 43, 56)"};
+  public evaluatePosition(x: number, y:number){
+
+  }
   public drawBoard(ctx: CanvasRenderingContext2D, model: BigBoard){
     ctx.fillStyle = this.COLORS.white;
     ctx.fillRect(0, 0, this.WIDTH, this.WIDTH);

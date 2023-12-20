@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, Renderer2, ViewChild} from '@angular/core';
+import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/core';
 import {BigBoard} from "../../model/BigBoard";
 import {Draw} from "../draw/Draw";
 
@@ -21,6 +21,20 @@ export class TttComponent implements OnInit{
       this.draw.drawBoard(this.ctx, this.model);
     } else {
       console.error('Failed to get canvas context!');
+    }
+  }
+  @HostListener('click', ['$event'])
+  canvasClick(event: MouseEvent): void {
+    const rect = this.canvas.nativeElement.getBoundingClientRect();
+    if (event.clientX>rect.left && event.clientX<rect.right
+      && event.clientY<rect.bottom && event.clientY>rect.top
+    ){
+      const x = event.clientX ;
+      const y = event.clientY ;
+      console.log(`Clicked at coordinates (x: ${x}, y: ${y})`);
+      console.log(`Boundries are (x: ${rect.bottom}, y: ${rect.top})`);
+      // Add your logic here based on the clicked coordinates
+
     }
   }
 
