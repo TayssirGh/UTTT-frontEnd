@@ -4,10 +4,12 @@ import {State} from "../../model/State";
 export class Draw{
   private WIDTH = 800;
   private posMap: Map<string, { x1: number, x2: number, y1: number, y2: number }> = new Map();
-
-
-  private COLORS = {redLight: "rgb(176,109,113)",white: "rgba(255,255,251,0.78)", draw: "#edede9", black: "#22223b", darkBlue: "#003049", blue: "#9db4c0", red: "rgb(129, 43, 56)"};
+  gameStart : boolean = false;
+  enableRow : number = null;
+  enableCol : number = null;
+  private COLORS = {beige : "#fdf0d5",redLight: "rgb(176,109,113)",white: "rgba(255,255,251,0.78)", draw: "#edede9", black: "#22223b", darkBlue: "#003049", blue: "#9db4c0", red: "rgb(129, 43, 56)"};
   public evaluatePosition(x: number, y:number){
+    let s = ""
     this.posMap?.forEach((coordinates, key) => {
       const startX = coordinates.x1;
       const endX = coordinates.x2;
@@ -16,10 +18,13 @@ export class Draw{
 
       if (x >= startX && x <= endX && y >= startY && y <= endY) {
         console.log("you clicked on cell : "+key)
+        s = key;
       }
     });
+    return s;
 
   }
+
   private generateKey(bigBoardRow: number, bigBoardCol: number, smallBoardRow: number, smallBoardCol: number): string {
     const key = `${bigBoardRow}${bigBoardCol}${smallBoardRow}${smallBoardCol}`;
     return (key.padStart(4, '0'));
@@ -41,7 +46,11 @@ export class Draw{
         let bigBoardCol = j;
         const startX =j * squareSize;
         const startY = i * squareSize;
-
+        if(this.enableRow ==i && this.enableCol == j){
+          ctx.fillStyle = this.COLORS.beige
+          ctx.globalAlpha = 0.2;
+          ctx.fillRect(startX, startY, squareSize, squareSize);
+        }
         ctx.strokeStyle = this.COLORS.black;
         ctx.strokeRect(startX, startY, squareSize, squareSize);
         this.drawSmallBoard({ctx: ctx, smallBoard: model.boards[i][j], startX: startX, startY: startY, bigBoardRow:i, bigBoardCol : bigBoardCol});
