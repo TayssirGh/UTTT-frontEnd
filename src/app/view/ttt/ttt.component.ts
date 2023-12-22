@@ -31,9 +31,8 @@ export class TttComponent implements OnInit{
     const x = event.clientX  - rect.left;
     const y = event.clientY - rect.top;
     ///TODO: send the mouse click and the positionMap and change the model (backend!!!)
-    //=================================MVP===========================================
+    //=============================MVP-2PLAYER===========================================
     let s = this.draw.evaluatePosition(x,y);
-
     console.log(s)
     if(!this.draw.gameStart){
       this.click = !this.click;
