@@ -7,6 +7,7 @@ export class BigBoard{
   currentPlayer: CurrentPlayer;
   winner : State;
   constructor() {
+
     this.boards = Array.from({ length: 3 }, () =>
       Array.from({ length: 3 }, () => new SmallBoard())
     );
