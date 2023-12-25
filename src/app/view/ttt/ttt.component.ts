@@ -2,6 +2,7 @@ import {Component, ElementRef, HostListener, OnInit, ViewChild} from '@angular/c
 import {BigBoard} from "../../model/BigBoard";
 import {Draw} from "../draw/Draw";
 import {State} from "../../model/State";
+import {WebsocketService} from "../../service/websocket.service";
 
 @Component({
   selector: 'app-ttt',
@@ -14,6 +15,9 @@ export class TttComponent implements OnInit{
   private model : BigBoard = new BigBoard();
   private draw : Draw = new Draw();
   private click = false;
+
+  constructor(private wsService : WebsocketService ) {
+  }
 
   ngOnInit(): void {
     this.canvas.nativeElement.width = 800;
