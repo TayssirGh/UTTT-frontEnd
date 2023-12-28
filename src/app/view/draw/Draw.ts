@@ -119,5 +119,6 @@ export class Draw{
       ctx.fillText("O", x + halfSize / 2, y + size - halfSize / 4);
     }
   }
+  ///TODO: draw winners!!
 
 }
