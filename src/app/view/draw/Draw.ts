@@ -4,9 +4,9 @@ import {State} from "../../model/State";
 export class Draw{
   private WIDTH = 800;
   private posMap: Map<string, { x1: number, x2: number, y1: number, y2: number }> = new Map();
-  gameStart : boolean = false;
   enableRow : number = null;
   enableCol : number = null;
+  gameStart : boolean = false;
   private COLORS = {beige : "#fdf0d5",redLight: "rgb(176,109,113)",white: "rgba(255,255,251,0.78)", draw: "#edede9", black: "#22223b", darkBlue: "#003049", blue: "#9db4c0", red: "rgb(129, 43, 56)"};
   public evaluatePosition(x: number, y:number){
     let s = ""
@@ -78,6 +78,9 @@ export class Draw{
         ctx.globalAlpha = 1;
       }
     }
+    if(model.winner != State.NULL){
+      this.drawWinner(ctx, model);
+    }
   }
   private drawSmallBoard({ctx, smallBoard, startX, startY, bigBoardRow, bigBoardCol}: {
     ctx: CanvasRenderingContext2D,
@@ -119,6 +122,38 @@ export class Draw{
       ctx.fillText("O", x + halfSize / 2, y + size - halfSize / 4);
     }
   }
-  ///TODO: draw winners!!
+  private drawWinner(ctx: CanvasRenderingContext2D, model: BigBoard){
+    let winnerText="";
+    (model.winner == State.DRAW)?winnerText = "This is a draw !":winnerText = `Winner is ${model.winner === State.X ? 'X' : 'O'}`;
+
+    ctx.font = 'bold 60px "Times New Roman", Times, serif';
+    ctx.fillStyle = this.COLORS.blue;
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const textWidth = ctx.measureText(winnerText).width;
+
+    const centerX = this.WIDTH / 2;
+    const centerY = this.WIDTH / 2;
+    ctx.globalAlpha = 0.7;
+
+    this.drawRoundedRect(ctx, centerX - textWidth / 2 - 20, centerY - 50, textWidth + 20, 100, 15);
+
+    ctx.fillStyle = model.winner === State.X ? this.COLORS.darkBlue : this.COLORS.red;
+    ctx.globalAlpha = 1;
+    ctx.fillText(winnerText, centerX, centerY);
+    ctx.textAlign = 'start';
+    ctx.textBaseline = 'alphabetic';
+  }
+  private drawRoundedRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, borderRadius: number) {
+    ctx.beginPath();
+    ctx.moveTo(x + borderRadius, y);
+    ctx.arcTo(x + width, y, x + width, y + height, borderRadius);
+    ctx.arcTo(x + width, y + height, x, y + height, borderRadius);
+    ctx.arcTo(x, y + height, x, y, borderRadius);
+    ctx.arcTo(x, y, x + width, y, borderRadius);
+    ctx.closePath();
+    ctx.fill();
+  }
 
 }
