@@ -37,35 +37,65 @@ export class TttComponent implements OnInit{
     ///TODO: send the mouse click and the positionMap and change the model (backend!!!)
     //=============================MVP-2PLAYER===========================================
     let s = this.draw.evaluatePosition(x,y);
-    console.log(s)
+    console.log(this.draw.gameStart)
     if(!this.draw.gameStart){
+      this.draw.gameStart = true;
       this.click = !this.click;
       this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
       this.draw.enableRow = parseInt(s[2]);
       this.draw.enableCol = parseInt(s[3]);
-      this.draw.gameStart = true
       this.draw.drawBoard(this.ctx, this.model)
     }
-    else if(this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] == State.NULL
-      && this.model.boards[parseInt(s[0])][parseInt(s[1])].winner == State.NULL
-    ){
-      this.click = !this.click;
-
-      if( parseInt(s[0])==this.draw.enableRow && parseInt(s[1])==this.draw.enableCol){
-        this.draw.enableRow = parseInt(s[2]);
-        this.draw.enableCol = parseInt(s[3]);
-        // this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
-        this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = this.changePlayer(this.click)
-        this.draw.drawBoard(this.ctx, this.model);
-      }
-      else {
-        this.draw.enableRow = parseInt(s[2]);
-        this.draw.enableCol = parseInt(s[3]);
-        this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
-        this.draw.drawBoard(this.ctx, this.model);
-
+    else {
+      if(this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] == State.NULL
+        && this.model.boards[parseInt(s[0])][parseInt(s[1])].winner == State.NULL
+      ){
+        if(this.model.boards[this.draw.enableRow][this.draw.enableCol].winner == State.NULL){
+          if (parseInt(s[0]) == this.draw.enableRow && parseInt(s[1]) == this.draw.enableCol){
+            this.click = !this.click;
+            this.draw.enableRow = parseInt(s[2]);
+            this.draw.enableCol = parseInt(s[3]);
+            this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+            this.draw.drawBoard(this.ctx, this.model)
+          }
+        }
+        else {
+          this.click = !this.click;
+          this.draw.enableRow = parseInt(s[2]);
+          this.draw.enableCol = parseInt(s[3]);
+          this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+          this.draw.drawBoard(this.ctx, this.model)
+        }
       }
     }
+    // if(!this.draw.gameStart){
+    //   this.click = !this.click;
+    //   this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+    //   this.draw.enableRow = parseInt(s[2]);
+    //   this.draw.enableCol = parseInt(s[3]);
+    //   this.draw.gameStart = true
+    //   this.draw.drawBoard(this.ctx, this.model)
+    // }
+    // else if(this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] == State.NULL
+    //   && this.model.boards[parseInt(s[0])][parseInt(s[1])].winner == State.NULL
+    // ){
+    //   this.click = !this.click;
+    //
+    //   if( parseInt(s[0])==this.draw.enableRow && parseInt(s[1])==this.draw.enableCol){
+    //     this.draw.enableRow = parseInt(s[2]);
+    //     this.draw.enableCol = parseInt(s[3]);
+    //     // this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+    //     this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = this.changePlayer(this.click)
+    //     this.draw.drawBoard(this.ctx, this.model);
+    //   }
+    //   else {
+    //     this.draw.enableRow = parseInt(s[2]);
+    //     this.draw.enableCol = parseInt(s[3]);
+    //     this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+    //     this.draw.drawBoard(this.ctx, this.model);
+    //
+    //   }
+    // }
 
 
   }
