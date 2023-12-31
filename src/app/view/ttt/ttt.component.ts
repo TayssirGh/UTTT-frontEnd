@@ -15,6 +15,11 @@ export class TttComponent implements OnInit{
   private model : BigBoard = new BigBoard();
   private draw : Draw = new Draw();
   private click = false;
+  private count = 0;
+  visible: boolean;
+  onePlayerMode : boolean;
+  twoPlayerMode : boolean;
+
 
   constructor(private wsService : WebsocketService ) {
   }
@@ -23,48 +28,65 @@ export class TttComponent implements OnInit{
     this.canvas.nativeElement.width = 800;
     this.canvas.nativeElement.height = 800;
     this.ctx = this.canvas?.nativeElement.getContext('2d');
+    this.visible = true
     if (this.ctx) {
       this.draw.drawBoard(this.ctx, this.model);
     } else {
       console.error('Failed to get canvas context!');
     }
   }
+  public chooseMode(id: string){
+    if(id==="1p"){
+      this.onePlayerMode = true;
+      this.twoPlayerMode = false;
+    }
+    else if(id === "2p"){
+      this.onePlayerMode = false;
+      this.twoPlayerMode = true;
+    }
+    this.count ++;
+    this.visible = false;
+  }
   @HostListener('click', ['$event'])
   canvasClick(event: MouseEvent): void {
-    const rect = this.canvas.nativeElement.getBoundingClientRect();
-    const x = event.clientX  - rect.left;
-    const y = event.clientY - rect.top;
-    ///TODO: send the mouse click and the positionMap and change the model (backend!!!)
-    //=============================MVP-2PLAYER===========================================
-    let s = this.draw.evaluatePosition(x,y);
-    console.log(this.draw.gameStart)
-    if(!this.draw.gameStart){
-      this.draw.gameStart = true;
-      this.click = !this.click;
-      this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
-      this.draw.enableRow = parseInt(s[2]);
-      this.draw.enableCol = parseInt(s[3]);
-      this.draw.drawBoard(this.ctx, this.model)
-    }
-    else {
-      if(this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] == State.NULL
-        && this.model.boards[parseInt(s[0])][parseInt(s[1])].winner == State.NULL
-      ){
-        if(this.model.boards[this.draw.enableRow][this.draw.enableCol].winner == State.NULL){
-          if (parseInt(s[0]) == this.draw.enableRow && parseInt(s[1]) == this.draw.enableCol){
-            this.click = !this.click;
-            this.draw.enableRow = parseInt(s[2]);
-            this.draw.enableCol = parseInt(s[3]);
-            this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
-            this.draw.drawBoard(this.ctx, this.model)
-          }
-        }
-        else {
+    if(this.twoPlayerMode ){
+      this.count ++;
+      if (this.count>2){
+        const rect = this.canvas.nativeElement.getBoundingClientRect();
+        const x = event.clientX  - rect.left;
+        const y = event.clientY - rect.top;
+        ///TODO: send the mouse click and the positionMap and change the model (backend!!!)
+        //=============================MVP-2PLAYER===========================================
+        let s = this.draw.evaluatePosition(x,y);
+        if(!this.draw.gameStart){
+          this.draw.gameStart = true;
           this.click = !this.click;
+          this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
           this.draw.enableRow = parseInt(s[2]);
           this.draw.enableCol = parseInt(s[3]);
-          this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
           this.draw.drawBoard(this.ctx, this.model)
+        }
+        else {
+          if(this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] == State.NULL
+            && this.model.boards[parseInt(s[0])][parseInt(s[1])].winner == State.NULL
+          ){
+            if(this.model.boards[this.draw.enableRow][this.draw.enableCol].winner == State.NULL){
+              if (parseInt(s[0]) == this.draw.enableRow && parseInt(s[1]) == this.draw.enableCol){
+                this.click = !this.click;
+                this.draw.enableRow = parseInt(s[2]);
+                this.draw.enableCol = parseInt(s[3]);
+                this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+                this.draw.drawBoard(this.ctx, this.model)
+              }
+            }
+            else {
+              this.click = !this.click;
+              this.draw.enableRow = parseInt(s[2]);
+              this.draw.enableCol = parseInt(s[3]);
+              this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+              this.draw.drawBoard(this.ctx, this.model)
+            }
+          }
         }
       }
     }

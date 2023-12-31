@@ -6,4 +6,12 @@
   </div>
 
 </div>
-
+<p-dialog  [(visible)]="visible" [style]="{width: '30vw'}">
+  <div >
+    <p class="flex text-4xl flex-column	align-items-center justify-content-center font-bold"> Please choose the game mode </p>
+    <div class="flex flex-wrap  justify-content-around ">
+      <p-button id="1p" label="One Player" (onClick)="chooseMode('1p')"></p-button>
+      <p-button (onClick)="chooseMode('2p')" id="2p" label="Two Players" severity="secondary"></p-button>
+    </div>
+  </div>
+</p-dialog>

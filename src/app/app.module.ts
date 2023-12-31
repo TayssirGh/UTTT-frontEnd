@@ -4,6 +4,8 @@ import { ButtonModule } from 'primeng/button';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TttComponent } from './view/ttt/ttt.component';
+import {DialogModule} from "primeng/dialog";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -13,6 +15,9 @@ import { TttComponent } from './view/ttt/ttt.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ButtonModule,
+    DialogModule,
+    BrowserAnimationsModule,
     ButtonModule
   ],
   providers: [],
