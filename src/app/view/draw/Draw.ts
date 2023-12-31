@@ -7,7 +7,7 @@ export class Draw{
   enableRow : number = null;
   enableCol : number = null;
   gameStart : boolean = false;
-  private COLORS = {beige : "#fdf0d5",redLight: "rgb(176,109,113)",white: "rgba(255,255,251,0.78)", draw: "#edede9", black: "#22223b", darkBlue: "#003049", blue: "#9db4c0", red: "rgb(129, 43, 56)"};
+  private COLORS = {beige : "#fff5e4",redLight: "rgb(176,109,113)",white: "rgba(255,255,251,0.78)", draw: "#edede9", black: "#22223b", darkBlue: "#003049", blue: "#9db4c0", red: "rgb(129, 43, 56)"};
   public evaluatePosition(x: number, y:number){
     let s = ""
     this.posMap?.forEach((coordinates, key) => {

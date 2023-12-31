@@ -11,10 +11,21 @@ export class WebsocketService {
   constructor() {
     this.initConnectionSocket()
   }
-  initConnectionSocket(){
-    const url = "http://localhost:8080/topic/app";
+// -------- connection to the game  ------------
+  public initConnectionSocket(){
+    console.log("connecting to the game");
+    const url = "http://localhost:8080/game";
     const socket = new SockJS(url);
     this.stompClient = Stomp.over(socket);
   }
-  ///TODO: Implement the methods
+  public createGame(){
+
+  }
+  public connectToGame(){
+
+  }
+  public connectToRandomGame(){
+
+  }
+
 }
