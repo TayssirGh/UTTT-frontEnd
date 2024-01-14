@@ -3,6 +3,8 @@ import {BigBoard} from "../../model/BigBoard";
 import {Draw} from "../draw/Draw";
 import {State} from "../../model/State";
 import {WebsocketService} from "../../service/websocket.service";
+import {OnePlayerResponse} from "../../model/dto/OnePlayerResponse";
+import {TwoPlayerResponse} from "../../model/dto/TwoPlayerResponse";
 
 @Component({
   selector: 'app-ttt',
@@ -16,6 +18,8 @@ export class TttComponent implements OnInit{
   private draw : Draw = new Draw();
   private click = false;
   private count = 0;
+  private tworesp = new TwoPlayerResponse();
+  private oneresp = new OnePlayerResponse();
   visible: boolean;
   onePlayerMode : boolean;
   twoPlayerMode : boolean;
@@ -52,7 +56,7 @@ export class TttComponent implements OnInit{
     const rect = this.canvas.nativeElement.getBoundingClientRect();
     const x = event.clientX  - rect.left;
     const y = event.clientY - rect.top;
-    //=============================MVP-2PLAYER===========================================
+    //============================================MVP-2PLAYER===================================================
     if(this.twoPlayerMode ){
       this.count ++;
       if (this.count>2){
@@ -61,8 +65,17 @@ export class TttComponent implements OnInit{
         if(!this.draw.gameStart){
           this.draw.gameStart = true;
           this.click = !this.click;
-          this.wsService.sendMove(s);
-          this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+          // this.wsService.sendMove(s);
+          // let res = this.makeMove(s);
+          this.wsService.sendMove(s).subscribe(
+          (response )=>{
+            console.log("hello", response)
+            // this.tworesp = response;
+
+          });
+          console.log("test1")
+          this.model.boards[parseInt(s[0])][parseInt(s[1])].
+            board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
           this.draw.enableRow = parseInt(s[2]);
           this.draw.enableCol = parseInt(s[3]);
           this.draw.drawBoard(this.ctx, this.model)
@@ -74,26 +87,79 @@ export class TttComponent implements OnInit{
             if(this.model.boards[this.draw.enableRow][this.draw.enableCol].winner == State.NULL){
               if (parseInt(s[0]) == this.draw.enableRow && parseInt(s[1]) == this.draw.enableCol){
                 this.click = !this.click;
-                this.wsService.sendMove(s)
+                // this.wsService.sendMove(s)
+                // this.makeMove(s)
+                this.wsService.sendMove(s).subscribe(
+                  (response )=>{
+                    console.log("hello", response)
+                    if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
+                      this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.X;
+                    }
+                    else if(response.board[parseInt(s[0])][parseInt(s[1])]=="o"){
+                      this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.O;
+                    }
+                    else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x/o"){
+                      this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.DRAW;
+                    }
+                    if (response.value === "x"){
+                      this.model.winner = State.X
+                    }
+                    else if(response.value === "o"){
+                      this.model.winner = State.O
+                    }
+                    else if(response.value === "x/o"){
+                      this.model.winner = State.DRAW;
+                    }
+                    this.draw.drawBoard(this.ctx, this.model)
+                  });
+                console.log("test2")
                 this.draw.enableRow = parseInt(s[2]);
                 this.draw.enableCol = parseInt(s[3]);
-                this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+                this.model.boards[parseInt(s[0])][parseInt(s[1])].
+                  board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
                 this.draw.drawBoard(this.ctx, this.model)
               }
             }
             else {
               this.click = !this.click;
-              this.wsService.sendMove(s)
+              // this.wsService.sendMove(s)
+              // this.makeMove(s);
+              this.wsService.sendMove(s).subscribe(
+                (response )=>{
+                  console.log("hello", response)
+                  if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.X;
+                  }
+                  else if(response.board[parseInt(s[0])][parseInt(s[1])]=="o"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.O;
+                  }
+                  else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x/o"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.DRAW;
+                  }
+                  if (response.value === "x"){
+                    this.model.winner = State.X
+                  }
+                  else if(response.value === "o"){
+                    this.model.winner = State.O
+                  }
+                  else if(response.value === "x/o"){
+                    this.model.winner = State.DRAW;
+                  }
+                  this.draw.drawBoard(this.ctx, this.model)
+                  // this.tworesp = response;
+                });
+              console.log("test3")
               this.draw.enableRow = parseInt(s[2]);
               this.draw.enableCol = parseInt(s[3]);
-              this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
+              this.model.boards[parseInt(s[0])][parseInt(s[1])].
+                board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
               this.draw.drawBoard(this.ctx, this.model)
             }
           }
         }
       }
     }
-    //=============================MVP-1PLAYER===========================================
+    //===============================================MVP-1PLAYER=================================================
     else if(this.onePlayerMode){
       this.count ++;
       if (this.count>2){
@@ -107,6 +173,7 @@ export class TttComponent implements OnInit{
   public changePlayer(cl : boolean){
     return  cl?State.O:State.X;
   }
+
 
 
 }

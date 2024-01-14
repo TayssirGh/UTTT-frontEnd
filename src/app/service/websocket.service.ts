@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import SockJS from "sockjs-client";
 import {Stomp} from "@stomp/stompjs";
 import {HttpClient} from "@angular/common/http";
+import {TwoPlayerResponse} from "../model/dto/TwoPlayerResponse";
+import {OnePlayerResponse} from "../model/dto/OnePlayerResponse";
 
 @Injectable({
   providedIn: 'root'
@@ -33,14 +35,15 @@ export class WebsocketService {
       'Content-Type': 'application/json',
     };
     const moveEndpoint = `${this.backendUrl}/2pmove`;
-    return this.httpClient.post(moveEndpoint, data,{ headers, responseType: 'text' }).subscribe(
-      (response) => {
-        console.log(response);
-      },
-      (error) => {
-        console.error('BELEHI SAYABNI', error);
-      }
-    );
+    return this.httpClient.post<TwoPlayerResponse | OnePlayerResponse>(moveEndpoint, data,{ headers })
+      // .subscribe(
+      // (response ) => {
+      //   console.log(response);
+      // },
+      // (error) => {
+      //   console.error('BELEHI SAYABNI', error);
+      // }
+    // );
   }
 
 

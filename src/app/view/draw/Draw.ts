@@ -71,8 +71,8 @@ export class Draw{
           ctx.fillText("X", startX + squareSize/6, startY+squareSize/1.1, )
         }
         else if(model.boards[i][j].winner == State.DRAW){
-          ctx.fillStyle = this.COLORS.draw;
-          ctx.globalAlpha = 0.4;
+          ctx.fillStyle = this.COLORS.black;
+          ctx.globalAlpha = 0.1;
           ctx.fillRect(startX, startY, squareSize, squareSize);
         }
         ctx.globalAlpha = 1;
