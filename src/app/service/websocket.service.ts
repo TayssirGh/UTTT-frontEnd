@@ -36,14 +36,7 @@ export class WebsocketService {
     };
     const moveEndpoint = `${this.backendUrl}/2pmove`;
     return this.httpClient.post<TwoPlayerResponse | OnePlayerResponse>(moveEndpoint, data,{ headers })
-      // .subscribe(
-      // (response ) => {
-      //   console.log(response);
-      // },
-      // (error) => {
-      //   console.error('BELEHI SAYABNI', error);
-      // }
-    // );
+
   }
 
 
