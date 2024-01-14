@@ -49,18 +49,19 @@ export class TttComponent implements OnInit{
   }
   @HostListener('click', ['$event'])
   canvasClick(event: MouseEvent): void {
+    const rect = this.canvas.nativeElement.getBoundingClientRect();
+    const x = event.clientX  - rect.left;
+    const y = event.clientY - rect.top;
+    //=============================MVP-2PLAYER===========================================
     if(this.twoPlayerMode ){
       this.count ++;
       if (this.count>2){
-        const rect = this.canvas.nativeElement.getBoundingClientRect();
-        const x = event.clientX  - rect.left;
-        const y = event.clientY - rect.top;
         ///TODO: send the mouse click and the positionMap and change the model (backend!!!)
-        //=============================MVP-2PLAYER===========================================
-        let s = this.draw.evaluatePosition(x,y);
+        let s = this.draw.evaluatePosition(x!,y!);
         if(!this.draw.gameStart){
           this.draw.gameStart = true;
           this.click = !this.click;
+          this.wsService.sendMove(s);
           this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
           this.draw.enableRow = parseInt(s[2]);
           this.draw.enableCol = parseInt(s[3]);
@@ -73,6 +74,7 @@ export class TttComponent implements OnInit{
             if(this.model.boards[this.draw.enableRow][this.draw.enableCol].winner == State.NULL){
               if (parseInt(s[0]) == this.draw.enableRow && parseInt(s[1]) == this.draw.enableCol){
                 this.click = !this.click;
+                this.wsService.sendMove(s)
                 this.draw.enableRow = parseInt(s[2]);
                 this.draw.enableCol = parseInt(s[3]);
                 this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
@@ -81,6 +83,7 @@ export class TttComponent implements OnInit{
             }
             else {
               this.click = !this.click;
+              this.wsService.sendMove(s)
               this.draw.enableRow = parseInt(s[2]);
               this.draw.enableCol = parseInt(s[3]);
               this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = this.changePlayer(this.click);
@@ -88,6 +91,14 @@ export class TttComponent implements OnInit{
             }
           }
         }
+      }
+    }
+    //=============================MVP-1PLAYER===========================================
+    else if(this.onePlayerMode){
+      this.count ++;
+      if (this.count>2){
+        let s = this.draw.evaluatePosition(x!,y!);
+
       }
     }
 

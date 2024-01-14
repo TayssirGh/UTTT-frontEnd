@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { TttComponent } from './view/ttt/ttt.component';
 import {DialogModule} from "primeng/dialog";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { HttpClientModule} from "@angular/common/http";
+import {WebsocketService} from "./service/websocket.service";
 
 @NgModule({
   declarations: [
@@ -18,9 +20,10 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     ButtonModule,
     DialogModule,
     BrowserAnimationsModule,
-    ButtonModule
+    ButtonModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [WebsocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
