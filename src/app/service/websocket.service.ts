@@ -38,6 +38,14 @@ export class WebsocketService {
     return this.httpClient.post<TwoPlayerResponse | OnePlayerResponse>(moveEndpoint, data,{ headers })
 
   }
+  public restartGame() {
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    const restatEndpoint = `${this.backendUrl}/restart`;
+    return this.httpClient.post(restatEndpoint,"restart game",{ headers })
+
+  }
 
 
 
