@@ -45,12 +45,13 @@ export class TttComponent implements OnInit{
     else if(id === "2p"){
       this.onePlayerMode = false;
       this.twoPlayerMode = true;
-      this.wsService.restartGame().subscribe(
-        (response )=>{
-          console.log( response)
 
-        });
     }
+    this.wsService.restartGame().subscribe(
+      (response )=>{
+        console.log( response)
+
+      });
     this.count ++;
     this.visible = false;
   }
