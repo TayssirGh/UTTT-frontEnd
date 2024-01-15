@@ -37,21 +37,21 @@ export class TttComponent implements OnInit{
     }
   }
   public chooseMode(id: string){
-
-    if(id==="1p"){
-      this.onePlayerMode = true;
-      this.twoPlayerMode = false;
-    }
-    else if(id === "2p"){
-      this.onePlayerMode = false;
-      this.twoPlayerMode = true;
-
-    }
     this.wsService.restartGame().subscribe(
       (response )=>{
         console.log( response)
 
       });
+    if(id==="1p"){
+      this.onePlayerMode = true;
+      this.twoPlayerMode = false;
+    }
+
+  else if(id === "2p"){
+      this.onePlayerMode = false;
+
+      this.twoPlayerMode = true;
+    }
     this.count ++;
     this.visible = false;
   }
