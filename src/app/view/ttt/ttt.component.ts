@@ -3,8 +3,7 @@ import {BigBoard} from "../../model/BigBoard";
 import {Draw} from "../draw/Draw";
 import {State} from "../../model/State";
 import {WebsocketService} from "../../service/websocket.service";
-import {OnePlayerResponse} from "../../model/dto/OnePlayerResponse";
-import {TwoPlayerResponse} from "../../model/dto/TwoPlayerResponse";
+
 
 @Component({
   selector: 'app-ttt',
@@ -18,8 +17,6 @@ export class TttComponent implements OnInit{
   private draw : Draw = new Draw();
   private click = false;
   private count = 0;
-  private tworesp = new TwoPlayerResponse();
-  private oneresp = new OnePlayerResponse();
   visible: boolean;
   onePlayerMode : boolean;
   twoPlayerMode : boolean;
@@ -73,7 +70,7 @@ export class TttComponent implements OnInit{
           this.click = !this.click;
           // this.wsService.sendMove(s);
           // let res = this.makeMove(s);
-          this.wsService.sendMove(s).subscribe(
+          this.wsService.send2pMove(s).subscribe(
           (response )=>{
             console.log("hello", response)
             // this.tworesp = response;
@@ -95,7 +92,7 @@ export class TttComponent implements OnInit{
                 this.click = !this.click;
                 // this.wsService.sendMove(s)
                 // this.makeMove(s)
-                this.wsService.sendMove(s).subscribe(
+                this.wsService.send2pMove(s).subscribe(
                   (response )=>{
                     console.log("hello", response)
                     if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
@@ -130,7 +127,7 @@ export class TttComponent implements OnInit{
               this.click = !this.click;
               // this.wsService.sendMove(s)
               // this.makeMove(s);
-              this.wsService.sendMove(s).subscribe(
+              this.wsService.send2pMove(s).subscribe(
                 (response )=>{
                   console.log("hello", response)
                   if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
@@ -166,14 +163,130 @@ export class TttComponent implements OnInit{
       }
     }
     //===============================================MVP-1PLAYER=================================================
-    else if(this.onePlayerMode){
-      this.count ++;
-      if (this.count>2){
-        let s = this.draw.evaluatePosition(x!,y!);
+    else if(this.onePlayerMode) {
+      this.count++;
+      if (this.count > 2) {
+        let s = this.draw.evaluatePosition(x!, y!);
+        if (!this.draw.gameStart) {
+          console.log("lena?")
+          this.draw.gameStart = true;
+          this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] = State.X;
+          this.draw.drawBoard(this.ctx, this.model);
+          this.wsService.send1pMove(s).subscribe(
+            (response) => {
+              console.log("hello", response)
+              s = response.aiMove[0].toString()+response.aiMove[1].toString()+response.aiMove[2].toString()+response.aiMove[3].toString();
+              // console.log("hayaaa",s)
+              this.model.boards[parseInt(s[0])][parseInt(s[1])].
+                board[parseInt(s[2])][parseInt(s[3])] = State.O;
+              this.draw.enableRow = parseInt(s[2]);
+              this.draw.enableCol = parseInt(s[3]);
+              this.draw.drawBoard(this.ctx, this.model)
+            });
+        }
+        else {
+          if (this.model.boards[parseInt(s[0])][parseInt(s[1])].board[parseInt(s[2])][parseInt(s[3])] == State.NULL
+            && this.model.boards[parseInt(s[0])][parseInt(s[1])].winner == State.NULL
+          ) {
+            if (this.model.boards[this.draw.enableRow][this.draw.enableCol].winner == State.NULL) {
+              if (parseInt(s[0]) == this.draw.enableRow && parseInt(s[1]) == this.draw.enableCol) {
+                console.log("hani lenna 🥹")
+                ///TODO thabat ki yerba7 l player chneya l ai move!!!!!!!!!!!
+                this.wsService.send1pMove(s).subscribe((response)=>{
+                  if(response.board[parseInt(s[0])][parseInt(s[1])]=="o"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.X;
+                  }
+                  else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.O;
+                  }
+                  else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x/o"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.DRAW;
+                  }
+                  this.draw.drawBoard(this.ctx, this.model)
+                  if (response.value === "o"){
+                    this.model.winner = State.X
+                  }
+                  else if(response.value === "x"){
+                    this.model.winner = State.O
+                  }
+                  else if(response.value === "x/o"){
+                    this.model.winner = State.DRAW;
+                  }
+                  else {
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].
+                      board[parseInt(s[2])][parseInt(s[3])] = State.X;
+                    this.draw.drawBoard(this.ctx, this.model);
+                    s = response.aiMove[0].toString()+response.aiMove[1].toString()+response.aiMove[2].toString()+response.aiMove[3].toString();
+                    this.draw.enableRow = parseInt(s[2]);
+                    this.draw.enableCol = parseInt(s[3]);
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].
+                      board[parseInt(s[2])][parseInt(s[3])] = State.O;
+                    if(response.board[parseInt(s[0])][parseInt(s[1])]=="o"){
+                      this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.X;
+                    }
+                    else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
+                      this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.O;
+                    }
+                    else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x/o"){
+                      this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.DRAW;
+                    }
+                    this.draw.drawBoard(this.ctx, this.model)
+                  }
+                  this.draw.drawBoard(this.ctx, this.model)
 
+                })
+              }
+            }
+            else {
+              console.log("ahla bik 🎈")
+              this.wsService.send1pMove(s).subscribe((response)=>{
+                if(response.board[parseInt(s[0])][parseInt(s[1])]=="o"){
+                  this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.X;
+                }
+                else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
+                  this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.O;
+                }
+                else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x/o"){
+                  this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.DRAW;
+                }
+                this.draw.drawBoard(this.ctx, this.model)
+                if (response.value === "o"){
+                  this.model.winner = State.X
+                }
+                else if(response.value === "x"){
+                  this.model.winner = State.O
+                }
+                else if(response.value === "x/o"){
+                  this.model.winner = State.DRAW;
+                }
+                else {
+                  this.model.boards[parseInt(s[0])][parseInt(s[1])].
+                    board[parseInt(s[2])][parseInt(s[3])] = State.X;
+                  this.draw.drawBoard(this.ctx, this.model);
+                  s = response.aiMove[0].toString()+response.aiMove[1].toString()+response.aiMove[2].toString()+response.aiMove[3].toString();
+                  this.draw.enableRow = parseInt(s[2]);
+                  this.draw.enableCol = parseInt(s[3]);
+                  this.model.boards[parseInt(s[0])][parseInt(s[1])].
+                    board[parseInt(s[2])][parseInt(s[3])] = State.O;
+                  if(response.board[parseInt(s[0])][parseInt(s[1])]=="o"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.X;
+                  }
+                  else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.O;
+                  }
+                  else if(response.board[parseInt(s[0])][parseInt(s[1])]=="x/o"){
+                    this.model.boards[parseInt(s[0])][parseInt(s[1])].winner = State.DRAW;
+                  }
+                  this.draw.drawBoard(this.ctx, this.model)
+                }
+                this.draw.drawBoard(this.ctx, this.model)
+
+              })
+            }
+          }
+        }
       }
     }
-
 
   }
   public changePlayer(cl : boolean){
