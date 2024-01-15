@@ -30,13 +30,19 @@ export class WebsocketService {
   }
   public connectToRandomGame(){
   }
-  public sendMove(data: string) {
+  public send2pMove(data: string) {
     const headers = {
       'Content-Type': 'application/json',
     };
     const moveEndpoint = `${this.backendUrl}/2pmove`;
-    return this.httpClient.post<TwoPlayerResponse | OnePlayerResponse>(moveEndpoint, data,{ headers })
-
+    return this.httpClient.post<TwoPlayerResponse>(moveEndpoint, data,{ headers })
+  }
+  public send1pMove(data : string){
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    const moveEndpoint = `${this.backendUrl}/1pmove`;
+    return this.httpClient.post<OnePlayerResponse>(moveEndpoint, data,{ headers })
   }
 
 

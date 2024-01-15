@@ -67,7 +67,7 @@ export class TttComponent implements OnInit{
           this.click = !this.click;
           // this.wsService.sendMove(s);
           // let res = this.makeMove(s);
-          this.wsService.sendMove(s).subscribe(
+          this.wsService.send2pMove(s).subscribe(
           (response )=>{
             console.log("hello", response)
             // this.tworesp = response;
@@ -89,7 +89,7 @@ export class TttComponent implements OnInit{
                 this.click = !this.click;
                 // this.wsService.sendMove(s)
                 // this.makeMove(s)
-                this.wsService.sendMove(s).subscribe(
+                this.wsService.send2pMove(s).subscribe(
                   (response )=>{
                     console.log("hello", response)
                     if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
@@ -124,7 +124,7 @@ export class TttComponent implements OnInit{
               this.click = !this.click;
               // this.wsService.sendMove(s)
               // this.makeMove(s);
-              this.wsService.sendMove(s).subscribe(
+              this.wsService.send2pMove(s).subscribe(
                 (response )=>{
                   console.log("hello", response)
                   if(response.board[parseInt(s[0])][parseInt(s[1])]=="x"){
@@ -164,7 +164,17 @@ export class TttComponent implements OnInit{
       this.count ++;
       if (this.count>2){
         let s = this.draw.evaluatePosition(x!,y!);
+        if(!this.draw.gameStart){
+          this.draw.gameStart = true;
+          this.model.boards[parseInt(s[0])][parseInt(s[1])].
+            board[parseInt(s[2])][parseInt(s[3])] = State.X;
+          this.draw.drawBoard(this.ctx, this.model);
+          this.wsService.send1pMove(s).subscribe(
+            (response )=>{
+              console.log("hello", response)
 
+            });
+        }
       }
     }
 
