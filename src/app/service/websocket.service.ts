@@ -15,6 +15,7 @@ export class WebsocketService {
   constructor(private httpClient: HttpClient) {
     this.initConnectionSocket()
   }
+  
 // -------- connection to the game  ------------
   public initConnectionSocket(){
     console.log("connecting to the game");
